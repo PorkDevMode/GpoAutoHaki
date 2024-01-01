@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using InputInterceptorNS;
@@ -72,7 +72,7 @@ class Program
                 {
                     try
                     {
-                        hook.SimulateInput("J", 1, 75);
+                        hook.SimulateInput("j", 1, 75);
                     }
                     catch(Exception ex) 
                     { 
@@ -90,11 +90,13 @@ class Program
 
     static Color GetColorAt(int x, int y)
     {
-        Bitmap screenPixel = new Bitmap(1, 1);
-        using (Graphics g = Graphics.FromImage(screenPixel))
+        using (Bitmap screenPixel = new Bitmap(1, 1))
         {
-            g.CopyFromScreen(x, y, 0, 0, new Size(1, 1));
+            using (Graphics g = Graphics.FromImage(screenPixel))
+            {
+                g.CopyFromScreen(x, y, 0, 0, new Size(1, 1));
+            }
+            return screenPixel.GetPixel(0, 0);
         }
-        return screenPixel.GetPixel(0, 0);
     }
 }

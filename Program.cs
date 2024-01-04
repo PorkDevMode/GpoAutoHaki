@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using InputInterceptorNS;
+using Microsoft.Win32;
 
 class Program
 {
@@ -15,30 +17,35 @@ class Program
         public int Y;
     }
 
+
     static void Main(string[] args)
     {
-        Console.WriteLine("You MUST run this program as an administrator, Contact me on discord if you have a issue (tag: pork69)\n\nI AM NOT RESPONSIBLE FOR ANY BANS THIS CAUSES, IT USES A INPUT DRIVER THAT IS FROWNED UPON IN MANY GAMES.\n\n");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("You MUST run this program as an administrator, Contact me on discord if you have a issue (tag: pork69)\n");
 
-        if (!InputInterceptor.CheckDriverInstalled())
-        {
-            if (InputInterceptor.CheckAdministratorRights())
+
+        
+
+            if (!InputInterceptor.CheckDriverInstalled())
             {
-                if (!InputInterceptor.InstallDriver())
+                if (InputInterceptor.CheckAdministratorRights())
                 {
-                    Console.WriteLine("Failed to install the driver!");
+                    if (!InputInterceptor.InstallDriver())
+                    {
+                        Console.WriteLine("Failed to install the driver!");
+                        System.Threading.Thread.Sleep(5000);
+                        Environment.Exit(1);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("RUN AS ADMIN TO INSTALL DRIVER");
                     System.Threading.Thread.Sleep(5000);
                     Environment.Exit(1);
                 }
             }
-            else
-            {
-                Console.WriteLine("RUN AS ADMIN TO INSTALL DRIVER");
-                System.Threading.Thread.Sleep(5000);
-                Environment.Exit(1);
-            }
-        }
 
-        Console.WriteLine("Input driver is installed!");
+        Console.WriteLine("Input driver is installed! Please restart your pc if it does not work!");
 
         if (!InputInterceptor.Initialize())
         {
@@ -47,11 +54,11 @@ class Program
             Environment.Exit(1);
         }
 
-        Console.WriteLine("Initialized driver!");
+        Console.WriteLine("Initialized driver!\n\n");
 
         using (KeyboardHook hook = new KeyboardHook())
         {
-            Console.WriteLine("Press 1 while in program and hover over the target area, then press Enter.");
+            Console.WriteLine("Press 1 while in program and hover over the target area, then press Enter.\n");
 
             while (Console.ReadKey().Key != ConsoleKey.D1) { }
 
@@ -63,26 +70,24 @@ class Program
             Console.WriteLine($"Captured coordinates: X={targetX}, Y={targetY}");
             Console.WriteLine($"Captured color: RGB({capturedColor.R}, {capturedColor.G}, {capturedColor.B})");
 
-            Console.WriteLine("Press Escape to exit.");
-
             while (true)
             {
-                Color currentColor = GetColorAt(targetX, targetY);
-                if (currentColor == capturedColor)
-                {
-                    try
+                    Color currentColor = GetColorAt(targetX, targetY);
+                    if (currentColor == capturedColor)
                     {
-                        hook.SimulateInput("j", 1, 75);
-                    }
-                    catch(Exception ex) 
-                    { 
-                        Console.WriteLine(ex.Message); 
-                    }
+                        try
+                        {
+                            hook.SimulateInput("j", 1, 75);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
 
-                    Console.WriteLine("HAKI DOWN");
-                    System.Threading.Thread.Sleep(3000);
-                }
-
+                        Console.WriteLine("HAKI ACTIVATED");
+                        System.Threading.Thread.Sleep(3000);
+                    }
+                
                 System.Threading.Thread.Sleep(100);
             }
         }
